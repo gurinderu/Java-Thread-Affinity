@@ -18,13 +18,15 @@ JNI_SOURCES := $(patsubst %,%.cpp,$(JNI_STUBS))
 JNI_JAVA_SOURCES := $(patsubst %,$(TARGET_DIR)/%.class,$(subst .,/,$(JAVA_CLASSES)))
 
 JAVA_BUILD_DIR := $(TARGET_DIR)
+JAVA_HOME = $(shell jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));')
+JAVA_LIB := $(JAVA_HOME)/lib
+JVM_SHARED_LIBS := -L$(JAVA_LIB)/server 
 
-JAVA_HOME ?= /usr/java/default
-JAVA_LIB := $(JAVA_HOME)/jre/lib
-JVM_SHARED_LIBS := -L$(JAVA_LIB)/amd64/server -L$(JAVA_LIB)/i386/server  -L$(JAVA_LIB)/amd64/jrockit/ -L$(JAVA_LIB)/i386/jrockit/
+
 
 CXX=g++
-INCLUDES := -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/linux -I $(WORKING_DIR)
+UNAME_S := $(shell uname -s)
+INCLUDES := -I $(JAVA_HOME)/../include -I $(JAVA_HOME)/../include/$(UNAME_S) -I $(WORKING_DIR)
 
 # classpath for javah
 ifdef CLASSPATH
